@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  <title>Add Book</title>
+</head>
+<body>
+  {% if err %}
+         
+        <div style='float:right;'>{{ err }} </div>
+          
+     {% endif %}
+  <div>
+    <form id="searchform">
+      <label>Book Search:</label>
+      <input type = "search" id="search">
+      <input type="submit">
+    </form>
+  </div>
+  <div id="result">
+
+  </div>
+  
+</body>
+<script>
+  var startIndex = 0;
+  
+  $(document).ready(function (){
+    
+    function myfunc(){
+      $('#result').html('');
+      var query = $("#search").val();
+      var title = "";
+      var author = "";
+      var img = "";
+      var form = "";
+      $.get("https://www.googleapis.com/books/v1/volumes?q=" + query + "&maxResults=5&startIndex="+startIndex, function(response) {
+        for (var i = 0; i < 5; i++){
+          title=$('<div><h3 style="float:clear;"> Title :' + response.items[i].volumeInfo.title + 
+            '</h3>   </div>'); 
+
+          if (response.items[i].volumeInfo.authors != undefined){
+            author = $('<h4 style = "float:right;color:gray;width:40%;justify-content:justify;"> Author(s):' +  response.items[i].volumeInfo.authors + 
+              '</h4> ')
+          }
+          else{
+            author = $('<h4 style = "float:right;color:gray;width:40%;"> Author(s) :' +  "Not available" + 
+              '</h4> ')
+          }
+          if (response.items[i].volumeInfo.imageLinks != undefined){
+            img = $('<img src="'+response.items[i].volumeInfo.imageLinks.thumbnail + 
+              '"> <br><a href="' +response.items[i].selfLink +'"<button>Preview</button></a><br><br>')
+          }
+          else{
+            img = $('<img src="https://image.flaticon.com/icons/png/128/2748/2748558.png"> <br><a href="' +response.items[i].selfLink +'"<button>Preview</button></a><br><br>')
+          }
+          form = $('<form method="post" action="add" class="addBook">{%csrf_token%}<input type="text" value = "' +
+            response.items[i].volumeInfo.title+'"name="title" hidden><input type="text" value ="'+
+            response.items[i].selfLink +'"name="link" hidden><label>Number of Copies :</label><input type="number" name="number"  class="number" value=0 min=1><br><input type="submit" value="Add Book"></form>')
+          
+          title.appendTo('#result');
+          author.appendTo('#result');
+          img.appendTo('#result')
+          form.appendTo('#result')
+        }
+        $('<button style =  "float:left;" id="previous" >Previous </button>').appendTo('#result');
+        $('<button style =  "float:right;" id="next" >Next </button>').appendTo('#result');
+      
+
+        $("#next").click(function(){
+          startIndex += 5;
+          myfunc();
+    })
+    $("#previous").click(function(){
+          startIndex -= 5;
+          if (startIndex<=0){startIndex = 0;}
+          myfunc();
+    })
+      })
+      
+    }
+    $("#searchform").submit(function() {
+      event.preventDefault();
+      myfunc();
+    })
+  })
+</script>
+</html>

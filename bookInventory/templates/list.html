@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    #overlapped{
+      height:30%;
+      position:absolute;
+      width:60%;
+      left:20%;
+      top:30%;
+      border:1px solid black;
+    }
+    #filler{
+      width:100%;
+      height:100%;
+      min-height: 100%;
+      border:1px solid black;
+      left:0;
+      top:0;
+      position:absolute;
+      display:none;
+      background-color: rgba(141, 124, 124, 0.4);
+    }
+  </style>
+  <title>List of Books</title>
+</head>
+<body>
+  
+  <h1 >Welcome  to the Inventory, {{user}}.</h1>
+  <h3 >What will you be doing today?</h3>
+  <table>
+    <tr>
+      <th>Title</th>
+      <th>Num of Copies</th>
+      <th>Edit/Delete</th>
+    </tr>
+  {% for val in books %}
+    <tr>
+      <td>{{val.Book.Title}}</td>
+      <td>{{val.count}}</td>
+      
+      <td><button onclick="clicked({{val.id}}, '{{val.Book.Title}}', {{val.count}})">
+        Edit/Delete</button></td>
+  
+    </tr>
+    
+  {% endfor %}
+</table>
+<div id="filler">
+  <div id="overlapped">
+<h3>Edit:</h3>
+
+<h3><label>Title:</label><span id="titlename"></span></h3>
+
+<div style="float: left;"><form method="POST" action="/editInventory">
+  {% csrf_token %}
+<input type="text" value="" name="id" id="id" hidden >
+<label>Quantity:</label><input type="number" value="" id="quantity" name="quantity"><br><br>
+<input type="submit" value="Edit">
+</form></div><br><br>
+<div style="float:right;"><form method="POST" action="/deleteBook">
+  {% csrf_token %}
+<input type="text" value="" name="id" id="iddelete" hidden>
+<input type="submit" value="Delete"> 
+</form>
+</div>
+  </div>
+</div>
+  
+
+
+</body>
+<script>
+  function clicked(id, title, count){
+    document.getElementById("filler").style.display =  'block';
+    document.getElementById("titlename").innerHTML = title;
+    document.getElementById("quantity").value = count;
+    document.getElementById("id").value = id;
+    document.getElementById("iddelete").value = id;
+  }
+</script>
+</html>
