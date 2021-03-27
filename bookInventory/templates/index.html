@@ -1,8 +1,40 @@
-<h1>Hello World</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Hello {{user}}</title>
+</head>
+<body>
+	You can manage your store here.
+	<div style="float: left;">
+	{% for name in store %}
+    
+			<h2>{{name.Title}}</h2>
+			<a href="/managestore?id={{name.id}}"><button>Manage</button></a>
+		
+{% empty %}
+    Sorry, Looks like you don't have any stores registered.Don't worry you can add some.
+{% endfor %}
+</div>
+<button style="float:right;" onclick="clicked()">Add Store</button>
+<div style="display: none;" id="hidden">
+	<form action="/addStore"  method="POST">
+		{% csrf_token %}
+	<h2>Want to register a store?</h2>
+	<label>Store Name</label>
+	<input type="text" name="title">
+	<input type="submit"><br>
+	<small>*Store will be registered in your name {{user}}</small>
+	</form>
+</div>
 
-{% for val in items %}
-		<div >
-  <!-- <a href="/qty?table={{table}}&item={{val.item}}"><button type="button">{{val.item}}</button></a>  -->
-  <p>{{val}}</p>    
-		</div>
-		{% endfor %}
+	
+</body>
+<script>
+	function clicked(){
+		document.getElementById("hidden").style.display = "block";
+	}
+</script>
+</html>

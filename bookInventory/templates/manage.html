@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Store</title>
+</head>
+<body>
+  <a href="/storebook?id={{store.id}}"><button>Add Book from Inventory</button></a><br>
+  {% for item in book %}
+    
+  <strong>{{item.Book.Title}}</strong>
+  <span>{{item.count}}</span>
+  <form method="POST" action="/managestore">
+    {% csrf_token %}
+    <input type="number" value="{{item.id}}" name="id" hidden>
+    <input type="submit" value="Delete">
+  </form>
+
+{% empty %}
+Sorry, Looks like you don't have any added any books to your store.
+{% endfor %}
+</body>
+</html>

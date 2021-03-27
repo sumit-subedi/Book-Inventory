@@ -4,24 +4,71 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+            
   <title>Login</title>
 </head>
-<body>
+<body style="background-image: url(https://images.unsplash.com/photo-1477158340414-06e7a2c10ada?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1500&q=80)
+; background-size: cover;background-repeat: no-repeat;">
   
-  {% if err %}
-         
-        <div style='float:right;'>{{ err }} </div>
-          
-     {% endif %}
+  
+  
+
+
+<div class="container">
+	<div class="row">
+	<div class="section"> </div>
+   <main>
+    <center>
+     <div class="container">
+        <div  class="z-depth-3 y-depth-2 x-depth-3 grey silver-text lighten-4 row" style="display: inline-block; padding: 32px 48px 0px 48px; border: 1px; margin-top: 100px; solid #EEE;">
+          <div class="section msg msg-info z-depth-3 " >
+           <center style="font-size: large;"> Login to manage your stores.</center></div><br>
+          {% if err %}
+<div style="  border-color: #d32f2f;
+background-color: #ef5350;
+color: white;" class="msg msg-error z-depth-3 scale-transition">  {{err}} </div>
+
+        
+   {% endif %}
+  
   <form method="POST" action="login">
     {% csrf_token %}
-    <label>UserName : </label>
-    <input placeholder="Enter your username" type="text" name = "username"><br><br>
-    <label>Password : </label>
-    <input placeholder = "Enter password" type = "password" name = "password"><br><br>
-    
-    <input type="submit" value="Log In">
-  </form>
+  
+            <div class='row'>
+              <div class='input-field col s12'>
+                <input class='validate' type="text" name='username' id='email' required />
+                <label for='email'>Username</label>
+              </div>
+            </div>
+            <div class='row'>
+              <div class='input-field col m12'>
+                <input class='validate' type='password' name='password' id='password' required />
+                <label for='password'>Password</label>
+              </div>
+              <label style='float: right;'>
+              <a href="/register"><b style="font-size: large;">Register Here.</b></a>
+              </label>
+            </div>
+            <br/>
+            <center>
+              <div class='row'>
+                <button style="margin-left:65px;"  type='submit' name='btn_login' class='col  s6 btn btn-small white black-text  waves-effect z-depth-1 y-depth-1'>Login</button>
+              </div>
+            </center>
+     </form>
+        </div>
+       </div>
+      </center>
+      </main>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+
+	</div>
+</div>
   
 </body>
 </html>

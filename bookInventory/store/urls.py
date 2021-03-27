@@ -10,5 +10,8 @@ urlpatterns = [
     path('list', views.listInventory, name = 'listInventory'),
     path('editInventory', views.editInventory, name="editInventory"),
     path('deleteBook', views.deleteInventory, name="deleteInventory"),
+    path('addStore', views.addStore, name="addStore"),
+    path('managestore', views.managestore, name='managestore'),
+    path('storebook', views.storebook, name="storebook")
 
 ]

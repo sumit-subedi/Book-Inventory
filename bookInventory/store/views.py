@@ -7,23 +7,22 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 
-from store.models import Book, Inventory
+from store.models import Book, Inventory, Store, storeBooks
 
 @login_required(login_url='/login')
 
 def home(request):
-  book = "Hamlet"
-  book_url="https://www.googleapis.com/books/v1/volumes?q={}&maxResults=5&startIndex=0".format(book)
-  print(book_url)
-  r = requests.get(url=book_url)
-  my_json= r.json()
-  books = []
-  for i in my_json["items"]:
+  if request.method=='GET':
+    stores = Store.objects.filter(user = request.user)
     
-    books.append(i['volumeInfo']['title'])
-  
-  
-  return render(request,'index.html', {'items':books})
+    return render(request, 'index.html', {'store':stores})
+
+@login_required(login_url='/login')
+def addStore(request):
+  if request.method == 'POST':
+    store = Store(user=request.user, Title=request.POST['title'])
+    store.save()
+    return redirect('/')
 
 def register(request):
   if request.method == 'GET':
@@ -52,7 +51,7 @@ def loginUser(request):
     print('here')
     user = authenticate(username=request.POST['username'], password=request.POST['password'])
     if user is not None:
-      print(request)
+      
       login(request, user)
       if user.is_staff:
         return redirect('/list')
@@ -127,3 +126,43 @@ def deleteInventory(request):
   inven = Inventory.objects.get(id=request.POST['id'])
   inven.Book.delete()
   return redirect('/list')
+
+@login_required(login_url='/login')
+def managestore(request):
+  if request.method == 'GET':
+    store = Store.objects.get(id=request.GET['id'])
+    books = storeBooks.objects.filter(Store=store)
+    return render(request, 'manage.html', {'book':books, 'store':store})
+  if request.method == 'POST':
+    storebook = storeBooks.objects.get(id = request.POST['id'])
+    inven = Inventory.objects.get(Book=storebook.Book)
+    print(storebook.count)
+    inven.count = inven.count + storebook.count
+    storebook.delete()
+    inven.save()
+    return redirect('/managestore?id='+ str(storebook.Store.id))
+
+@login_required(login_url='/login')
+def storebook(request):
+  if request.method=="GET":
+    inven = Inventory.objects.all()   
+    return render(request, 'storebook.html', {'inven':inven, 'id':request.GET['id']})
+  
+  if request.method == "POST":
+    inven = Inventory.objects.get(id = request.POST['id'])
+    if inven.count >= int(request.POST['count']):
+      if storeBooks.objects.filter(Book = inven.Book):
+        book = storeBooks.objects.get(Book = inven.Book)
+        book.count = book.count + int(request.POST['count'])
+        inven.count = inven.count - int(request.POST['count'])
+        book.save()
+        inven.save()
+      else:
+        book = inven.Book
+        store = Store.objects.get(id = request.POST['storeid'])
+        storebook = storeBooks(Book=book, Store=store, count=int(request.POST['count']))
+        storebook.save()
+        inven.count = inven.count - int(request.POST['count'])
+        inven.save()
+      return redirect('/managestore?id='+ request.POST['storeid'])
+      
