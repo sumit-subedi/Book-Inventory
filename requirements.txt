@@ -7,7 +7,6 @@ astor==0.7.1
 astroid==2.4.2
 autopep8==1.5.4
 bcrypt==3.1.7
-blinker==1.4
 Brlapi==0.7.0
 certifi==2020.4.5.1
 chardet==3.0.4
