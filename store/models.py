@@ -3,10 +3,10 @@ from django.contrib.auth.models import User
 
 
 class Book(models.Model):
-    Title = models.CharField(max_length=100)
+    Title = models.CharField(max_length=500)
     Link = models.CharField(max_length=200)
     Authors = models.CharField(max_length=200)
-    imageLink = models.CharField(max_length=100)
+    imageLink = models.CharField(max_length=500)
 
     def __str__(self):
       return self.Title

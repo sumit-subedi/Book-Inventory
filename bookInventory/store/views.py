@@ -100,7 +100,7 @@ def addBook(request):
     # Adding that book to the inventory
     inven = Inventory(Book = book, count=request.POST['number'])
     inven.save()
-    return render(request, 'add.html')
+    return redirect('/list')
 
 @login_required(login_url='/login')
 def listInventory(request):
