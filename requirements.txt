@@ -11,7 +11,7 @@ blinker==1.4
 # Brlapi==0.7.0
 certifi==2020.4.5.1
 chardet==3.0.4
-chrome-gnome-shell==0.0.0
+# chrome-gnome-shell==0.0.0
 click==7.1.2
 colorama==0.4.3
 command-not-found==0.3
