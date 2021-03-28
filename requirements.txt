@@ -7,7 +7,6 @@ astroid==2.4.2
 
 autopep8==1.5.4
 bcrypt==3.1.7
-blinker==1.4
 
 #autopep8==1.5.4
 
