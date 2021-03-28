@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Books</title>
+</head>
+
+<body>
+  <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names..">
+
+  <table style="border:1px solid black;" id="myTable">
+    <tr class="header">
+      <th>Title</th>
+      <th>Author</th>
+      <th >Count</th>
+      <th >Button</th>
+    </tr>
+    
+    <!-- <tr>
+      <td>Koniglich Essen</td>
+      <td>Germany</td>
+    </tr> -->
+  
+  
+
+  {% for item in inven %}
+  {% if item.count == 0%}
+  <tr>
+  <td><strong class="title">{{item.Book.Title}}</strong></td>
+  <td>{{item.Book.Authors}}</td>
+  <td><span>Out of Stock</span></td>
+  <td><button >Add</button><br></td>
+</tr>
+  {% else %}
+  <tr>
+  <td><strong>{{item.Book.Title}}</strong></td>
+  <td>{{item.Book.Authors}}</td>
+  <td><span>{{item.count}}</span></td>
+  <td><button onclick="clicked( '{{item.id}}', '{{item.Book.Title}}', {{item.count}} )">
+    Add</button><br></td></tr>
+  {% endif %}
+  
+{% endfor %}
+</table>
+<div id="hidden" style="display: none;">
+<h3>Title: <span id="title"></span></h3>
+<form method="POST" action="/storebook">
+  {% csrf_token %}
+  <input type="text" id="id" name="id" hidden>
+  <input type="text" name="storeid" value="{{id}}" hidden>
+  <label>Number of Books to add:</label>
+  <input type="number" id="count" min="1" name="count">
+  <input type="submit" value="Add Book">
+</form>
+</div>
+</body>
+<script>
+  function clicked( id, title, count){
+
+    document.getElementById('hidden').style.display = 'block';
+    document.getElementById('title').innerHTML = title;
+    
+    document.getElementById('id').value = id;
+    document.getElementById('count').max = count;
+  }
+
+  
+  function myFunction() {
+  // Declare variables
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tr = table.getElementsByTagName("tr");
+
+  // Loop through all table rows, and hide those who don't match the search query
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    var td1 = tr[i].getElementsByTagName("td")[1];
+    if (td) {
+      txtValue = td.textContent + td1.textContent || td.innerText + td1.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
+  }
+}
+</script>
+</html>
