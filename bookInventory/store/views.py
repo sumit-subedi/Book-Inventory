@@ -11,7 +11,6 @@ from django.contrib.auth.decorators import login_required
 from store.models import Book, Inventory, Store, storeBooks
 
 @login_required(login_url='/login')
-
 def home(request):
   if request.method=='GET':
     stores = Store.objects.filter(user = request.user)
