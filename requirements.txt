@@ -4,15 +4,12 @@ appdirs==1.4.4
 asgiref==3.3.1
 astor==0.7.1
 astroid==2.4.2
-<<<<<<< HEAD
+
 autopep8==1.5.4
 bcrypt==3.1.7
 blinker==1.4
-=======
-#autopep8==1.5.4
 
-Brlapi==0.7.0
->>>>>>> 7636d402558cd9e6df3f8b475aa9feee8e1f20d0
+#autopep8==1.5.4
 certifi==2020.4.5.1
 chardet==3.0.4
 click==7.1.2
