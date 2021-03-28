@@ -5,24 +5,33 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Add Books</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
 <body>
-  <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names..">
+  <div class="container">
+  <div class="input-field  container z-depth-1 white-text">
+    <div class="right-align"><a class="btn right-align" href="/logout">Logout</a></div>
+    <form id="searchform" class="container">
+      <i class="material-icons prefix">search</i>
+      <input id="myInput" onkeyup="myFunction()" type="text"  class="black-text" placeholder="Search for Books" required>
+      
+    </form>
+  </div>
 
-  <table style="border:1px solid black;" id="myTable">
-    <tr class="header">
-      <th>Title</th>
-      <th>Author</th>
-      <th >Count</th>
-      <th >Button</th>
-    </tr>
-    
-    <!-- <tr>
-      <td>Koniglich Essen</td>
-      <td>Germany</td>
-    </tr> -->
   
+    <table id="myTable" class=" striped teal">
+      <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Count</th>
+        <th>Add</th>
+      </tr>
+    
   
 
   {% for item in inven %}
@@ -31,35 +40,42 @@
   <td><strong class="title">{{item.Book.Title}}</strong></td>
   <td>{{item.Book.Authors}}</td>
   <td><span>Out of Stock</span></td>
-  <td><button >Add</button><br></td>
+  <td><button class="btn disabled" ><i class="material-icons">add</i></button><br></td>
 </tr>
   {% else %}
   <tr>
   <td><strong>{{item.Book.Title}}</strong></td>
   <td>{{item.Book.Authors}}</td>
   <td><span>{{item.count}}</span></td>
-  <td><button onclick="clicked( '{{item.id}}', '{{item.Book.Title}}', {{item.count}} )">
-    Add</button><br></td></tr>
+  <td><a class="btn #0277bd light-blue darken-3 modal-trigger waves-effect waves-light" onclick="clicked( '{{item.id}}', '{{item.Book.Title}}', {{item.count}} )"
+     href="#modal1"  onclick="clicked({{item.id}}, '{{item.Book.Title}}', {{item.count}})">
+    <i class="tiny material-icons">add</i> <span>Add</span></a></td>
+</tr>
   {% endif %}
   
 {% endfor %}
 </table>
-<div id="hidden" style="display: none;">
-<h3>Title: <span id="title"></span></h3>
+<div id="modal1" class="modal">
+  <div class="container">
+<h5>Title: <span id="title"></span></h5>
 <form method="POST" action="/storebook">
   {% csrf_token %}
   <input type="text" id="id" name="id" hidden>
   <input type="text" name="storeid" value="{{id}}" hidden>
-  <label>Number of Books to add:</label>
+  <label style="font-size: 25px;">Number of Books to add:</label>
   <input type="number" id="count" min="1" name="count">
-  <input type="submit" value="Add Book">
+  
+  <button class="btn waves-effect waves-light center-align" type="submit" name="action">Add
+		<i class="material-icons right">add</i></button>
 </form>
+</div>
+</div>
 </div>
 </body>
 <script>
   function clicked( id, title, count){
+    console.log(id, title)
 
-    document.getElementById('hidden').style.display = 'block';
     document.getElementById('title').innerHTML = title;
     
     document.getElementById('id').value = id;
@@ -68,6 +84,7 @@
 
   
   function myFunction() {
+    console.log("here")
   // Declare variables
   var input, filter, table, tr, td, i, txtValue;
   input = document.getElementById("myInput");
@@ -89,5 +106,11 @@
     }
   }
 }
+$(document).ready(function(){
+    $('.modal').modal();
+  });
+  $(document).ready(function(){
+    $('.tooltipped').tooltip();
+  });
 </script>
 </html>

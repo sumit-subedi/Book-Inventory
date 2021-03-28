@@ -17,9 +17,9 @@ def home(request):
     
   return render(request, 'index.html', {'store':stores})
 
-def logout(request):
+def logoutuser(request):
   logout(request)
-  return redirect("/")
+  return redirect("/login")
 
 @login_required(login_url='/login')
 def addStore(request):
@@ -100,7 +100,7 @@ def addBook(request):
     # Adding that book to the inventory
     inven = Inventory(Book = book, count=request.POST['number'])
     inven.save()
-    return render(request, 'add.html')
+    return redirect('/list')
 
 @login_required(login_url='/login')
 def listInventory(request):
@@ -151,6 +151,7 @@ def storebook(request):
     return render(request, 'storebook.html', {'inven':inven, 'id':request.GET['id']})
   
   if request.method == "POST":
+    print(request.POST)
     inven = Inventory.objects.get(id = request.POST['id'])
     if inven.count >= int(request.POST['count']):
       if storeBooks.objects.filter(Book = inven.Book):

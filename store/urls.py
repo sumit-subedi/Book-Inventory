@@ -13,6 +13,6 @@ urlpatterns = [
     path('addStore', views.addStore, name="addStore"),
     path('managestore', views.managestore, name='managestore'),
     path('storebook', views.storebook, name="storebook"),
-    path('logout', views.logout, name='logout')
+    path('logout', views.logoutuser, name='logout')
 
 ]
