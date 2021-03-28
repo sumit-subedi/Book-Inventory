@@ -13,10 +13,9 @@ from store.models import Book, Inventory, Store, storeBooks
 @login_required(login_url='/login')
 
 def home(request):
-  if request.method=='GET':
-    stores = Store.objects.filter(user = request.user)
+  stores = Store.objects.filter(user = request.user)
     
-    return render(request, 'index.html', {'store':stores})
+  return render(request, 'index.html', {'store':stores})
 
 def logout(request):
   logout(request)
