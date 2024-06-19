@@ -1,35 +1,33 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-
 class Book(models.Model):
-    Title = models.CharField(max_length=500)
-    Link = models.CharField(max_length=200)
-    Authors = models.CharField(max_length=200)
-    imageLink = models.CharField(max_length=500)
+    title = models.CharField(max_length=500)
+    link = models.CharField(max_length=200)
+    authors = models.CharField(max_length=200)
+    image_link = models.CharField(max_length=500)
 
     def __str__(self):
-      return self.Title
+        return self.title
 
 class Inventory(models.Model):
-  Book = models.OneToOneField(Book, on_delete=models.CASCADE)
-  count = models.IntegerField(default=1)
+    book = models.OneToOneField(Book, on_delete=models.CASCADE)
+    count = models.IntegerField(default=1)
 
-  def __str__(self):
-    return str(self.Book)
+    def __str__(self):
+        return str(self.book)
 
 class Store(models.Model):
-  user = models.ForeignKey(User, related_name='ownedby', on_delete=models.CASCADE)
-  Title = models.CharField(max_length=100)
+    user = models.ForeignKey(User, related_name='stores', on_delete=models.CASCADE)
+    title = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.title
 
-  def __str__(self):
-    return self.Title
+class StoreBook(models.Model):
+    store = models.ForeignKey(Store, related_name='store_books', on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, related_name='store_books', on_delete=models.CASCADE)
+    count = models.IntegerField(default=1)
 
-class storeBooks(models.Model):
-  Store = models.ForeignKey(Store, on_delete=models.CASCADE)
-  Book = models.ForeignKey(Book, on_delete=models.CASCADE)
-  count = models.IntegerField(default=1)
-
-  def __str__(self):
-    return str(self.Book)
+    def __str__(self):
+        return str(self.book)

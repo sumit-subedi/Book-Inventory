@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>List of Books</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f5f5f5; /* Light gray background */
+      color: #424242; /* Dark gray text color */
+      font-family: 'Roboto', sans-serif; /* Google Font for text */
+    }
+
+    .container {
+      margin-top: 20px;
+    }
+
+    .section-title {
+      margin-bottom: 20px;
+    }
+
+    .fixed-action-btn {
+      position: fixed;
+      bottom: 50px;
+      right: 50px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav>
+    <div class="nav-wrapper cyan darken-2">
+      <a href="#" class="brand-logo center">My Bookstore</a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a href="/list">Inventory</a></li>
+        <li><a href="/logout">Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="section">
+      <h5 class="center-align section-title">Welcome to the Inventory Management, {{user}}.</h5>
+    </div>
+    
+    <table class="striped teal">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Num of Copies</th>
+          <th>Edit/Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for val in books %}
+        <tr>
+          <td>{{val.book.title}}</td>
+          <td>{{val.count}}</td>
+          <td>
+            <a class="btn light-blue darken-3 modal-trigger waves-effect waves-light" href="#modal1" onclick="clicked({{val.id}}, '{{val.book.title}}', {{val.count}})">
+              <i class="tiny material-icons">bookmark</i> <span>Edit/Delete</span>
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- Modal for Edit/Delete -->
+    <div id="modal1" class="modal">
+      <div class="modal-content">
+        <h5>Edit Book</h5>
+        <h6><strong>Title:</strong> <span id="titlename"></span></h6>
+        <form method="POST" action="/editInventory">
+          {% csrf_token %}
+          <input type="text" name="id" id="id" hidden>
+          <div class="input-field">
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" name="quantity" required>
+          </div>
+          <button class="btn waves-effect waves-light left-align" type="submit" name="action">Edit
+            <i class="material-icons right">edit</i>
+          </button>
+        </form>
+        <br>
+        <form method="POST" action="/deleteBook">
+          {% csrf_token %}
+          <input type="text" name="id" id="iddelete" hidden>
+          <button class="btn waves-effect waves-light right-align red" type="submit" name="action">Delete
+            <i class="material-icons right">delete</i>
+          </button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Floating Action Button -->
+  <div class="fixed-action-btn">
+    <a href="/add" class="btn-floating btn-large red tooltipped" data-position="left" data-tooltip="Add New Book">
+      <i class="large material-icons">add</i>
+    </a>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script>
+    function clicked(id, title, count){
+      document.getElementById("titlename").innerHTML = title;
+      document.getElementById("quantity").value = count;
+      document.getElementById("id").value = id;
+      document.getElementById("iddelete").value = id;
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      var modals = document.querySelectorAll('.modal');
+      M.Modal.init(modals);
+    });
+
+    $(document).ready(function(){
+      $('.tooltipped').tooltip();
+    });
+  </script>
+</body>
+</html>

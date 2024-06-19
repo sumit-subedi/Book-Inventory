@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Books</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</head>
+
+<body>
+  <!-- Navigation Bar -->
+  <nav>
+    <div class="nav-wrapper cyan darken-2">
+      <a href="#" class="brand-logo center">My Bookstore</a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a href="/">Home</a></li>
+        <li><a href="/list">Inventory</a></li>
+        <li><a href="/logout">Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="input-field container z-depth-1 white-text">
+      <form id="searchform" class="container">
+        <i class="material-icons prefix">search</i>
+        <input id="myInput" onkeyup="myFunction()" type="text" class="black-text" placeholder="Search for Books" required>
+      </form>
+    </div>
+
+    <table id="myTable" class="striped teal">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Author</th>
+          <th>Count</th>
+          <th>Add</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in inven %}
+          {% if item.count == 0 %}
+            <tr>
+              <td><strong class="title">{{item.book.title}}</strong></td>
+              <td>{{item.book.authors}}</td>
+              <td><span>Out of Stock</span></td>
+              <td><button class="btn disabled"><i class="material-icons">add</i></button></td>
+            </tr>
+          {% else %}
+            <tr>
+              <td><strong>{{item.book.title}}</strong></td>
+              <td>{{item.book.authors}}</td>
+              <td><span>{{item.count}}</span></td>
+              <td>
+                <a class="btn light-blue darken-3 modal-trigger waves-effect waves-light"
+                   href="#modal1"
+                   onclick="clicked('{{item.id}}', '{{item.Book.Title}}', {{item.count}})">
+                  <i class="tiny material-icons">add</i> <span>Add</span>
+                </a>
+              </td>
+            </tr>
+          {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+    
+    <div id="modal1" class="modal">
+      <div class="modal-content">
+        <h5>Title: <span id="title"></span></h5>
+        <form method="POST" action="/storebook">
+          {% csrf_token %}
+          <input type="text" id="id" name="id" hidden>
+          <input type="text" name="storeid" value="{{id}}" hidden>
+          <div class="input-field">
+            <label for="count" style="font-size: 25px;">Number of Books to add:</label>
+            <input type="number" id="count" min="1" name="count">
+          </div>
+          <button class="btn waves-effect waves-light center-align" type="submit" name="action">Add
+            <i class="material-icons right">add</i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function clicked(id, title, count) {
+      document.getElementById('title').innerHTML = title;
+      document.getElementById('id').value = id;
+      document.getElementById('count').max = count;
+    }
+
+    function myFunction() {
+      var input, filter, table, tr, td, i, txtValue;
+      input = document.getElementById("myInput");
+      filter = input.value.toUpperCase();
+      table = document.getElementById("myTable");
+      tr = table.getElementsByTagName("tr");
+
+      for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[0];
+        var td1 = tr[i].getElementsByTagName("td")[1];
+        if (td) {
+          txtValue = td.textContent + td1.textContent || td.innerText + td1.innerText;
+          if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+          } else {
+            tr[i].style.display = "none";
+          }
+        }
+      }
+    }
+
+    $(document).ready(function(){
+      $('.modal').modal();
+      $('.tooltipped').tooltip();
+    });
+  </script>
+</body>
+</html>

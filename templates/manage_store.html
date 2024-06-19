@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <title>Manage Store</title>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav>
+    <div class="nav-wrapper cyan darken-2">
+      <a href="#" class="brand-logo center">My Bookstore</a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a href="/">Home</a></li>
+        <li><a href="/list">Inventory</a></li>
+        <li><a href="/logout">Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container">
+    <div class="section">
+      <center class="cyan darken-2">
+        <h5 class="center-align">Manage Store: {{store.title}}</h5>
+        <div class="right-align" style="margin-right: 50px;">
+          <a href="/storebook?id={{store.id}}" class="btn btn-floating btn-large red tooltipped" data-position="right" data-tooltip="Add New Book">
+            <i class="large material-icons">add</i>
+          </a>
+        </div>
+      </center>
+      
+      <table class="striped teal">
+        <thead>
+          <tr>
+            <th>Book Title</th>
+            <th>Num of Copies</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in books %}
+            <tr>
+              <td>{{item.book.title}}</td>
+              <td>{{item.count}}</td>
+              <td>
+                <form method="POST" action="/managestore">
+                  {% csrf_token %}
+                  <input type="number" value="{{item.id}}" name="id" hidden>
+                  <button class="btn waves-effect waves-light red" type="submit" name="action">Delete
+                    <i class="material-icons right">delete</i>
+                  </button>
+                </form>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="3" class="center-align">Sorry, looks like you haven't added any books to your store.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    $(document).ready(function(){
+      $('.tooltipped').tooltip();
+    });
+  </script>
+</body>
+</html>

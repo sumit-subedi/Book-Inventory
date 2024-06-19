@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Book</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f5f5f5; /* Light gray background */
+      color: #424242; /* Dark gray text color */
+      font-family: 'Roboto', sans-serif; /* Google Font for text */
+    }
+
+    .container {
+      margin-top: 20px;
+    }
+
+    .card-horizontal {
+      display: flex;
+      height: 100%;
+    }
+
+    .card-image {
+      flex: 0 0 30%; /* Adjust image width */
+    }
+
+    .card-stacked {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-content {
+      flex: 1;
+      padding: 1rem;
+    }
+
+    .add-book-btn {
+      position: fixed;
+      bottom: 50px;
+      right: 50px;
+    }
+
+    .search-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .search-input {
+      margin-right: 10px;
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-button {
+      flex: 0;
+    }
+
+    .pagination-buttons {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
+  
+  z-index: 10; /* Ensure buttons are above other content */
+}
+
+.pagination-buttons button {
+  font-size: 2rem; 
+  color: aqua;
+  background-color: silver;
+  border: none;
+  cursor: pointer;
+}
+
+.pagination-buttons button:hover {
+  background-color: #bdbdbd;
+}
+
+  </style>
+</head>
+
+<body>
+  <nav>
+    <div class="nav-wrapper cyan darken-2">
+      <a href="#" class="brand-logo center">My Bookstore</a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a href="/list">Inventory</a></li>
+        <li><a href="/logout">Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="search-wrapper">
+      <form id="searchform" class="row">
+        <div class="input-field white col s8 m9 search-input">
+          <i class="material-icons prefix">search</i>
+          <input id="search" type="text" class="validate" placeholder="Search for Books" required>
+        </div>
+        <div class="col s4 m3">
+          <button type="submit" class="btn brown search-button">Search</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="result" class="row">
+      <!-- Search results will be displayed here -->
+    </div>
+  </div>
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script>
+    var startIndex = 0;
+
+    $(document).ready(function () {
+      $('.tooltipped').tooltip();
+
+      function myfunc() {
+        $('#result').html('');
+        var query = $("#search").val();
+        $.get("https://www.googleapis.com/books/v1/volumes?q=" + query + "&maxResults=5&startIndex=" + startIndex, function (response) {
+          for (var i = 0; i < response.items.length; i++) {
+            var title = response.items[i].volumeInfo.title || "No Title Available";
+            var author = response.items[i].volumeInfo.authors ? response.items[i].volumeInfo.authors.join(', ') : "No Author Available";
+            var publish = response.items[i].volumeInfo.publishedDate || "No Date Available";
+            var img = response.items[i].volumeInfo.imageLinks ? response.items[i].volumeInfo.imageLinks.smallThumbnail : "https://image.flaticon.com/icons/png/128/2748/2748558.png";
+            var previewLink = response.items[i].volumeInfo.previewLink || "#";
+            var selfLink = response.items[i].selfLink;
+
+            var form = `
+              <form method="post" class="col s12 m6" action="add">
+                {% csrf_token %}
+                <input type="hidden" name="title" value="${title}">
+                <input type="hidden" name="link" value="${selfLink}">
+                <div class="input-field">
+                  <input type="number" name="number" class="validate" min="1" required>
+                  <label for="number">Number of Copies</label>
+                </div>
+                <button type="submit" class="btn brown">Add Book</button>
+              </form>`;
+
+            var card = `
+              <div class="col s12 m6">
+                <div class="card horizontal">
+                  <div class="card-image">
+                    <img src="${img}" alt="${title}">
+                  </div>
+                  <div class="card-stacked">
+                    <div class="card-content">
+                      <span class="card-title">${title}</span>
+                      <p>Author: ${author}</p>
+                      <p>Published: ${publish}</p>
+                    </div>
+                    <div class="card-action">
+                      <a href="${previewLink}" target="_blank">Preview</a>
+                      ${form}
+                    </div>
+                  </div>
+                </div>
+              </div>`;
+
+            $('#result').append(card);
+          }
+
+          $('#result').append('<div class="pagination-buttons"> <button id="previous" class="btn"><i class="material-icons">navigate_before</i></button> <button id="next"  class="btn"><i class="material-icons">navigate_next</i></button></div>');
+   
+          $("#next").click(function () {
+            startIndex += 5;
+            myfunc();
+          });
+          $("#previous").click(function () {
+            startIndex = Math.max(0, startIndex - 5);
+            myfunc();
+          });
+        });
+      }
+
+      $("#searchform").submit(function (event) {
+        event.preventDefault();
+        myfunc();
+      });
+    });
+  </script>
+</body>
+
+</html>

@@ -11,8 +11,8 @@ urlpatterns = [
     path('editInventory', views.editInventory, name="editInventory"),
     path('deleteBook', views.deleteInventory, name="deleteInventory"),
     path('addStore', views.addStore, name="addStore"),
-    path('managestore', views.managestore, name='managestore'),
-    path('storebook', views.storebook, name="storebook"),
+    path('managestore', views.manageStore, name='managestore'),
+    path('storebook', views.storeBook, name="storebook"),
     path('logout', views.logoutuser, name='logout')
 
 ]

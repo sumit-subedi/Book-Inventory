@@ -6,67 +6,81 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Hello {{user}}</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 </head>
 <body>
-	
-	<div class="container" >
-		<center class="cyan darken-2 "> 
-			<h5 class="centre-align">You can access your stores here, {{user}}.</h5>
-			<div class="right-align " style="margin-right: 50px;">
-				<a class="btn right-align" href="/logout">Logout</a>
-				<a style="margin-bottom: 10px;" class="btn #0277bd light-blue darken-3 modal-trigger waves-effect waves-light" href="#modal1"  onclick="clicked({{val.id}}, '{{val.Book.Title}}', {{val.count}})">
-					<i class="tiny material-icons">bookmark</i> <span>Add</span></a>
-	
-			</div></center>
-			<table class=" striped teal">
-				<tr>
-					<th>Store Name</th>
-					
-					<th>Manage</th>
-				</tr>
-	{% for name in store %}
-	<tr>
-		<td>{{name.Title}}</td>
-		<td><a class="btn #0277bd light-blue darken-3 modal-trigger waves-effect waves-light"
-			 href="/managestore?id={{name.id}}" >
-			<i class="tiny material-icons">bookmark</i> <span>Manage</span></a></td>
 
-	</tr>
-		
-{% empty %}
-    <h5>Sorry, Looks like you don't have any stores registered.Don't worry you can add some.</h5>
-{% endfor %}
+	<!-- Navigation Bar -->
+	<nav>
+		<div class="nav-wrapper cyan darken-2">
+			<a href="#" class="brand-logo center">My Bookstore</a>
+			<ul id="nav-mobile" class="right hide-on-med-and-down">
+				<li><a href="/">Home</a></li>
+				<li><a href="/list">Inventory</a></li>
+				<li><a href="/logout">Logout</a></li>
+			</ul>
+		</div>
+	</nav>
 
-</div>
-
-<!-- <button style="float:right;" onclick="clicked()">Add Store</button> -->
-<div id="modal1" class="modal">
+	<!-- Main Content -->
 	<div class="container">
-	<form action="/addStore"  method="POST">
-		{% csrf_token %}
-	<h5>Want to register a store?</h5>
-	<label style="font-size: 25px;">Store Name:</label>
-	<input type="text" name="title">
-	<button class="btn waves-effect waves-light left-align" type="submit" name="action">Add
-		<i class="material-icons right">add</i></button><br>
-	<small>*Store will be registered in your name {{user}}</small>
-	</form>
-</div>
-</div>
+		<div class="section">
+			<h5 class="center-align">You can access your stores here, {{user}}.</h5>
+			<div class="row">
+				{% for name in stores %}
+				<div class="col s12 m6">
+					<div class="card">
+						<div class="card-content">
+							<span class="card-title">{{name.title}}</span>
+							<p>Manage your store and its inventory.</p>
+						</div>
+						<div class="card-action">
+							<a href="/managestore?id={{name.id}}" class="btn #0277bd light-blue darken-3 waves-effect waves-light">
+								<i class="tiny material-icons">bookmark</i> Manage
+							</a>
+						</div>
+					</div>
+				</div>
+				{% empty %}
+				<h5>Sorry, looks like you don't have any stores registered. Don't worry, you can add some.</h5>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
 
-	
+	<!-- Floating Action Button -->
+	<div class="fixed-action-btn">
+		<a class="btn-floating btn-large red modal-trigger" href="#modal1">
+			<i class="large material-icons">add</i>
+		</a>
+	</div>
+
+	<!-- Modal for Adding Store -->
+	<div id="modal1" class="modal">
+		<div class="modal-content">
+			<h5>Want to register a store?</h5>
+			<form action="/addStore" method="POST">
+				{% csrf_token %}
+				<div class="input-field">
+					<input id="store_title" type="text" name="title" required>
+					<label for="store_title">Store Name</label>
+				</div>
+				<button class="btn waves-effect waves-light" type="submit" name="action">Add
+					<i class="material-icons right">add</i>
+				</button>
+				<p><small>*Store will be registered in your name, {{user}}</small></p>
+			</form>
+		</div>
+	</div>
+
+	<!-- Scripts -->
+	<script>
+		$(document).ready(function(){
+			$('.modal').modal();
+			$('.tooltipped').tooltip();
+		});
+	</script>
 </body>
-<script>
-	
-	$(document).ready(function(){
-    $('.modal').modal();
-  });
-  $(document).ready(function(){
-    $('.tooltipped').tooltip();
-  });
-</script>
 </html>
